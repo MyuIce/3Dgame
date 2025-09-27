@@ -1,0 +1,45 @@
+fileFormatVersion: 2
+guid: db14f1fe6d28beb41a44ede4bbdbfc1d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - itemDataBase: {fileID: 11400000, guid: 739fc42e000e46243be8884e663feacc, type: 2}
+  - icon1: {instanceID: 0}
+  - icon2: {instanceID: 0}
+  - icon3: {instanceID: 0}
+  - icon4: {instanceID: 0}
+  - icon5: {instanceID: 0}
+  - icon6: {instanceID: 0}
+  - icon7: {instanceID: 0}
+  - icon8: {instanceID: 0}
+  - icon9: {instanceID: 0}
+  - icon10: {instanceID: 0}
+  - icon11: {instanceID: 0}
+  - icon12: {instanceID: 0}
+  - icon13: {instanceID: 0}
+  - icon14: {instanceID: 0}
+  - icon15: {instanceID: 0}
+  - icon16: {instanceID: 0}
+  - icon17: {instanceID: 0}
+  - icon18: {instanceID: 0}
+  - icon19: {instanceID: 0}
+  - icon20: {instanceID: 0}
+  - icon21: {instanceID: 0}
+  - icon22: {instanceID: 0}
+  - icon23: {instanceID: 0}
+  - icon24: {instanceID: 0}
+  - icon25: {instanceID: 0}
+  - icon26: {instanceID: 0}
+  - icon27: {instanceID: 0}
+  - icon28: {instanceID: 0}
+  - icon29: {instanceID: 0}
+  - icon30: {instanceID: 0}
+  - togglegroup: {instanceID: 0}
+  - itemname: {instanceID: 0}
+  - itemsetumei: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
