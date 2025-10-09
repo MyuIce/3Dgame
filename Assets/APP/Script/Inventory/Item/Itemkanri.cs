@@ -81,7 +81,7 @@ public class Itemkanri : MonoBehaviour
         //持っている初期アイテム設定。//初期アイテムという概念がなければこの項目は必要ない
 
         //ポーションの数を2にする。
-        itemkazu[itemDataBase.GetItemLists()[1]] = 2;
+        itemkazu[itemDataBase.GetItemLists()[1]] = 4;
         
 
         //持ち物更新処理を呼び出す。
