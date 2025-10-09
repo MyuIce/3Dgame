@@ -8,7 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/APP/Scenes/Title.unity
     guid: 7ea214742b2d9ae4a96c4f1f606b3cbd
-  - enabled: 1
+  - enabled: 0
     path: Assets/APP/Scenes/Test.unity
     guid: 3b10e2f49fbf1f8459c82038d5734bd2
+  - enabled: 1
+    path: Assets/APP/Scenes/Test2.unity
+    guid: 3e72e60ee987e484a85fb904dbb7dfb7
+  - enabled: 1
+    path: Assets/APP/Scenes/StageChoice.unity
+    guid: ebc650b30e85b3f45926092a4cd031ff
   m_configObjects: {}

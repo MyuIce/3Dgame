@@ -2,7 +2,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(menuName = "Data/Create ItemData")]
-public class Itemdata1 : ScriptableObject
+public class Itemdata1 : ScriptableObject,GameItem
 {
     public enum itemtype
     {

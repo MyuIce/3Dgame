@@ -13,6 +13,10 @@ using UnityEngine.UI;
 using static Itemdata1;
 using static UnityEditor.Progress;
 
+
+//========================================
+//アイテムスロットの管理
+//========================================
 public class Itemkanri : MonoBehaviour
 {
     [SerializeField] private Itemdatabase itemDataBase;
@@ -78,8 +82,7 @@ public class Itemkanri : MonoBehaviour
 
         //ポーションの数を2にする。
         itemkazu[itemDataBase.GetItemLists()[1]] = 2;
-        //ロングソードの数を1にする。
-        itemkazu[itemDataBase.GetItemLists()[0]] = 1;
+        
 
         //持ち物更新処理を呼び出す。
         Motimonokoushin();
@@ -93,7 +96,7 @@ public class Itemkanri : MonoBehaviour
     {
 
         //持ち物更新処理
-        //持ち物リストのクリア
+        //持ち物リストのクリア（UI上）
         MotimonoList.Clear();
 
         //持っている個数が1個以上のアイテムを持ち物リストに追加する。
@@ -312,4 +315,19 @@ public class Itemkanri : MonoBehaviour
 
         }
     }
+
+    // Itemkanri.cs の中（クラス内）
+    private Dictionary<Itemdata1, int> itemCounts = new Dictionary<Itemdata1, int>();
+
+    // 初期化などで itemCounts を作っておく必要があります。
+    // 既に似たメンバがあるなら、このメソッド名と実装を合わせてください。
+
+    public int GetItemkazu(Itemdata1 item)
+    {
+        if (item == null) return 0;
+        if (itemCounts.TryGetValue(item, out int count))
+            return count;
+        return 0;
+    }
+
 }

@@ -5,6 +5,12 @@ using UnityEngine;
 using static Itemdata1;
 using static UnityEditor.Progress;
 
+//====================================================
+//アイテムの初期持ち物設定スクリプト
+//====================================================
+
+
+/*
 public class Iteminitial : MonoBehaviour
 {
     [SerializeField] private Itemdatabase itemDataBase;
@@ -19,8 +25,6 @@ public class Iteminitial : MonoBehaviour
         {
             //　アイテム数を全て0に
             itemkazu.Add(itemDataBase.GetItemLists()[i], 0);
-
-
         }
 
         //ポーションのみ数を2にする。
@@ -30,9 +34,7 @@ public class Iteminitial : MonoBehaviour
         var b = itemkazu[itemDataBase.GetItemLists()[1]];
         var c = itemkazu[itemDataBase.GetItemLists()[2]];
 
-        //Debug.Log(a);
-        //Debug.Log(b);
-        //Debug.Log(c);
+        
         
 
 
@@ -43,3 +45,4 @@ public class Iteminitial : MonoBehaviour
     }
 
 }
+*/

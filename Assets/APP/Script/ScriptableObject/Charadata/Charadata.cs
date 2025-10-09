@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//============================================
+//キャラデータのScriptableObject
+//============================================
 
 [CreateAssetMenu(menuName= "Data/Create StatusData")]
 public class Charadata : ScriptableObject 

@@ -1,55 +1,109 @@
-/*
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Soubikanri : MonoBehaviour
 {
-    [SerializeField] private Itemdatabase ItemDataBase;
-    [SerializeField] private GameObject icon1, icon2, icon3, icon4, icon5;
-    [SerializeField] private TextMeshProUGUI itemname1, itemname2, itemname3, itemname4, itemname5;
-    [SerializeField] private ToggleGroup togglegroup1, togglegroup2;
-    [SerializeField] private TextMeshProUGUI ATKKASAN, DEFKASAN, INTKASAN, RESKASAN, AGIKASAN, KYUU;
-    [SerializeField] private TextMeshProUGUI soubitypehyouzi, soubisetumei;
-    [SerializeField] private GameObject PlayrkanriObject, itemObject;
-    [SerializeField] private GameObject yousoprefab, hazusuprefab;
-    [SerializeField] private GameObject content;
-    [SerializeField] private GameObject Soubisetumei, Scroll, menukakushi, soubirankakushi;
+    // --- Inspectorで設定する項目 ---
+    [Header("データ参照")]
+    [SerializeField] private Itemdatabase itemDatabase;    // 全アイテム一覧（ScriptableObject等）
+    [SerializeField] private GameObject playerManagerObject;         // Playeriti をアタッチしたオブジェクト
+    [SerializeField] private GameObject itemManagerObject;           // Itemkanri をアタッチしたオブジェクト
 
-    private Itemdata1[] Soubi = new Itemdata1[5];
-    private Image[] Icons = new Image[5];
-    private List<Itemdata1> SoubikanouList = new List<Itemdata1>();
-    private Dictionary<Itemdata1, int> SoubisoutyakuDictionary = new Dictionary<Itemdata1, int>();
-    private soubiyouso soubiyousoscript;
-    private Toggle kakotoggle;
-    private int soubidankai;
+    [Header("スロット表示 (配列で管理)")]
+    [Tooltip("インスペクタでスロット数に合わせて要素を設定してください")]
+    [SerializeField] private GameObject[] iconSlotObjects = new GameObject[5];   // アイコンを持つ GameObject 配列
+    [SerializeField] private TextMeshProUGUI[] nameSlotTexts = new TextMeshProUGUI[5]; // アイテム名表示の配列
 
-    private Playeriti Playerkanricript;
-    private Itemkanri itemscript;
-    private Itemdata1.itemtype Soubitype;
+    [Header("装備一覧UI (動的生成部分)")]
+    [SerializeField] private GameObject yousoPrefab;    // 装備要素プレハブ
+    [SerializeField] private GameObject hazusuPrefab;   // 外す用プレハブ
+    [SerializeField] private GameObject content;        // スクロールの Content
 
+    [Header("装備情報表示")]
+    [SerializeField] private TextMeshProUGUI ATKplus, DEFplus, AGIplus, RESplus, INTplus;
+    [SerializeField] private TextMeshProUGUI /*soubitypeText*/ soubiSetumeiText;
 
-    //Start,SetSoubi,GetSoubi,SetSoubitype,Soubirankoushin,Soubiransentakukoushin,Soubiransentakukettei,Soubihyoujikoushin,Soubisetumeihyouji,ScrollClose
+    [Header("UI 制御 (表示/非表示)")]
+    [SerializeField] private GameObject soubiSetumeiPanel;
+    [SerializeField] private GameObject scrollPanel;
+    [SerializeField] private GameObject menuMask;
+    //[SerializeField] private GameObject soubiRanMask;
 
-    void Start()
+    // --- ランタイムで使う内部データ ---
+    private int slotCount = 5;                      // スロット数（iconSlotObjects.Lengthから自動設定）
+    private Itemdata1[] equippedItems;              // 現在の装備（スロットごと）
+    private Image[] iconImages;                     // アイコンの Image コンポーネントキャッシュ
+    private List<Itemdata1> canEquipList = new List<Itemdata1>(); // 現在のキャラが装備可能なアイテム一覧
+    private Dictionary<Itemdata1, int> equipCountDict = new Dictionary<Itemdata1, int>(); // アイテムの所持数等（初期化）
+    private int currentSlotIndex = 0;               // 選択中のスロットインデックス
+
+    // 参照キャッシュ
+    private Playeriti playerScript;
+    private Itemkanri itemManagerScript;
+
+    // --- 初期化 ---
+    private void Awake()
     {
-        foreach (var item in ItemDataBase.GetItemLists())
-            SoubisoutyakuDictionary.Add(item, 0);
+        // 配列サイズの決定（Inspector の配列長に合わせる）
+        slotCount = Mathf.Max(1, iconSlotObjects != null ? iconSlotObjects.Length : 5);
 
-        Playerkanricript = PlayrkanriObject.GetComponent<Player>();
-        itemscript = itemObject.GetComponent<Itemkanri>();
+        // 配列を初期化
+        equippedItems = new Itemdata1[slotCount];
+        iconImages = new Image[slotCount];
 
-        charadata Sousachara = Playerkanricript.Sousacharakoushin();
-        for (int i = 0; i < Soubi.Length; i++)
-            SetSoubi(Sousachara, i, null);
+        // icon の Image コンポーネントをキャッシュしておく
+        for (int i = 0; i < slotCount; i++)
+        {
+            if (iconSlotObjects != null && i < iconSlotObjects.Length && iconSlotObjects[i] != null)
+            {
+                iconImages[i] = iconSlotObjects[i].GetComponent<Image>();
+            }
+        }
     }
 
-    void SetSoubi(charadata data, int index, Itemdata1 item)
+    private void Start()
     {
+        // Player / Item 管理スクリプトを取得（Inspectorで未設定でも自動取得を試みる）
+        if (playerManagerObject != null && playerScript == null)
+            playerScript = playerManagerObject.GetComponent<Playeriti>();
+
+        if (itemManagerObject != null && itemManagerScript == null)
+            itemManagerScript = itemManagerObject.GetComponent<Itemkanri>();
+
+        // 所持アイテム数辞書を初期化（全アイテムをキーにして 0 を入れておく）
+        InitEquipCountDictionary();
+
+        // プレイヤーの装備情報を UI に反映
+        RefreshEquipmentUI();
+
+        //装備欄隠しパネルとスクロールパネルをOFFにする
+        if (menuMask != null) menuMask.SetActive(false);
+        if (scrollPanel != null) scrollPanel.SetActive(false);
+    }
+
+    // 全アイテムをキーにして辞書を作る（所持数の初期化）
+    private void InitEquipCountDictionary()
+    {
+        equipCountDict.Clear();
+        if (itemDatabase == null) return;
+
+        var all = itemDatabase.GetItemLists();
+        foreach (var it in all)
+        {
+            if (!equipCountDict.ContainsKey(it))
+                equipCountDict.Add(it, 0);
+        }
+    }
+
+    // ------------------------
+    // Helper: 装備の読み書き（CharaEquipment の既存APIに合わせる）
+    // ------------------------
+    private void SetEquippedItem(CharaEquipment data, int index, Itemdata1 item)
+    {
+        // 元コードの構造に合わせて switch でセット
         switch (index)
         {
             case 0: data.Soubi1 = item; break;
@@ -57,10 +111,11 @@ public class Soubikanri : MonoBehaviour
             case 2: data.Soubi3 = item; break;
             case 3: data.Soubi4 = item; break;
             case 4: data.Soubi5 = item; break;
+            default: Debug.LogWarning("SetEquippedItem: index out of range"); break;
         }
     }
 
-    Itemdata1 GetSoubi(charadata data, int index)
+    private Itemdata1 GetEquippedItem(CharaEquipment data, int index)
     {
         return index switch
         {
@@ -73,8 +128,10 @@ public class Soubikanri : MonoBehaviour
         };
     }
 
-    void SetSoubitype(charadata data, int index)
+    // スロットに対応する装備タイプを取得してプロパティに格納する（UI表示用）
+    private void SetSoubitypeFromEquipment(CharaEquipment data, int index)
     {
+        // これも元コードに合わせて switch
         Soubitype = index switch
         {
             0 => data.Soubitype1,
@@ -86,101 +143,192 @@ public class Soubikanri : MonoBehaviour
         };
     }
 
+    // --- 元と同じ名前の公開 API（UI から呼ばれることを想定） ---
+    // 装備欄（5スロット）全体を UI に反映するメソッド
     public void Soubirankoushin()
     {
-        soubidankai = 0;
-        charadata Sousachara = Playerkanricript.Sousacharakoushin();
+        RefreshEquipmentUI();
+    }
 
-        Array.Clear(Soubi, 0, Soubi.Length);
-
-        GameObject[] icons = { icon1, icon2, icon3, icon4, icon5 };
-        TextMeshProUGUI[] names = { itemname1, itemname2, itemname3, itemname4, itemname5 };
-
-        for (int i = 0; i < Soubi.Length; i++)
+    // 実際の更新処理（安全性のため nullチェックを多めに）
+    private void RefreshEquipmentUI()
+    {
+        if (playerScript == null)
         {
-            Soubi[i] = GetSoubi(Sousachara, i);
-
-            if (Soubi[i] != null)
+            if (playerManagerObject != null) playerScript = playerManagerObject.GetComponent<Playeriti>();
+            if (playerScript == null)
             {
-                icons[i].SetActive(true);
-                names[i].text = Soubi[i].GetItemname();
-                Icons[i] = icons[i].GetComponent<Image>();
-                Icons[i].sprite = Soubi[i].GetItemicon();
+                Debug.LogError("Playeriti is not assigned or found.");
+                return;
             }
-            else
+        }
+
+        CharaEquipment equip = playerScript.GetEquipment();
+        if (equip == null) return;
+
+        // equippedItems をクリアして、プレイヤー情報から取得した値で埋める
+        Array.Clear(equippedItems, 0, equippedItems.Length);
+
+        for (int i = 0; i < slotCount; i++)
+        {
+            equippedItems[i] = GetEquippedItem(equip, i);
+
+            // UI の更新
+            if (i < iconSlotObjects.Length && iconSlotObjects[i] != null)
             {
-                icons[i].SetActive(false);
-                names[i].text = "";
-                Icons[i] = icons[i].GetComponent<Image>();
-                Icons[i].sprite = null;
+                if (equippedItems[i] != null)
+                {
+                    iconSlotObjects[i].SetActive(true);
+                    if (i < nameSlotTexts.Length && nameSlotTexts[i] != null)
+                        nameSlotTexts[i].text = equippedItems[i].GetItemname();
+
+                    if (iconImages[i] != null)
+                        iconImages[i].sprite = equippedItems[i].GetItemicon();
+                }
+                else
+                {
+                    iconSlotObjects[i].SetActive(false);
+                    if (i < nameSlotTexts.Length && nameSlotTexts[i] != null)
+                        nameSlotTexts[i].text = "";
+                    if (iconImages[i] != null)
+                        iconImages[i].sprite = null;
+                }
             }
         }
     }
 
+    // 装備選択用リスト（スクロール領域）を更新して表示する
     public void Soubiransentakukoushin()
     {
-        foreach (Transform child in content.transform)
+        // clear existing children
+        if (content == null)
         {
-            Destroy(child.gameObject);
+            Debug.LogError("Content is not set.");
+            return;
         }
 
-        SoubikanouList.Clear();
+        ClearContentChildren(content);
 
-        List<Itemdata1> allItems = ItemDataBase.GetItemLists();
+        canEquipList.Clear();
+
+        if (itemDatabase == null || itemManagerScript == null)
+        {
+            Debug.LogWarning("ItemDatabase or ItemManager not assigned.");
+            return;
+        }
+
+        List<Itemdata1> allItems = itemDatabase.GetItemLists();
         foreach (Itemdata1 item in allItems)
         {
-            if (item.GetItemtype() == Soubitype && itemscript.GetItemkazu(item) > 0)
+            // 装備タイプが一致して、所持数が 0 より大きければ表示
+            if (item.GetItemtype() == Soubitype && itemManagerScript.GetItemkazu(item) > 0)
             {
-                GameObject soubiElement = Instantiate(yousoprefab, content.transform);
-                soubiyouso script = soubiElement.GetComponent<soubiyouso>();
+                GameObject element = Instantiate(yousoPrefab, content.transform);
+                Soubiyouso script = element.GetComponent<Soubiyouso>();
+                if (script != null)
+                {
+                    script.soubiitemname().text = item.GetItemname();
+                    var imgObj = script.soubiyousoicon();
+                    if (imgObj != null)
+                    {
+                        var img = imgObj.GetComponent<Image>();
+                        if (img != null) img.sprite = item.GetItemicon();
+                    }
 
-                script.soubiitemname().text = item.GetItemname();
-                script.soubiyousoicon().GetComponent<Image>().sprite = item.GetItemicon();
-                script.soubisoutyaku().SetActive(true);
-                script.soubityu().SetActive(false);
-                script.hokasoubityu().SetActive(false);
+                    script.soubisoutyaku().SetActive(true);
+                    script.soubityu().SetActive(false);
+                    script.hokasoubityu().SetActive(false);
 
-                SoubikanouList.Add(item);
+                    // 装備決定ボタンやクリックで Soubiransentakukettei(item) を呼ぶようにプレハブで設定しておく
+                }
+                canEquipList.Add(item);
             }
         }
 
-        GameObject hazusuObj = Instantiate(hazusuprefab, content.transform);
-        hazusuObj.GetComponentInChildren<TextMeshProUGUI>().text = "外す";
+        // 「外す」ボタンを追加
+        GameObject hazusuObj = Instantiate(hazusuPrefab, content.transform);
+        var tmp = hazusuObj.GetComponentInChildren<TextMeshProUGUI>();
+        if (tmp != null) tmp.text = "外す";
     }
 
-    public void Soubiransentakukettei(Itemdata1 sentakuitem)
+    // 装備選択決定（UI側から選択アイテムを渡して呼ぶ）
+    public void Soubiransentakukettei(Itemdata1 selectedItem)
     {
-        charadata Sousachara = Playerkanricript.Sousacharakoushin();
-        SetSoubi(Sousachara, soubidankai, sentakuitem);
-        Soubirankoushin();
-        Scroll.SetActive(false);
-        menukakushi.SetActive(false);
-        soubirankakushi.SetActive(false);
+        if (playerScript == null)
+        {
+            Debug.LogError("Playeriti is not assigned.");
+            return;
+        }
+
+        CharaEquipment equip = playerScript.GetEquipment();
+        if (equip == null) return;
+
+        SetEquippedItem(equip, currentSlotIndex, selectedItem);
+
+        // UI を更新して閉じる
+        RefreshEquipmentUI();
+        CloseScrollPanels();
     }
 
+    // 指定インデックスの装備タイプを表示し、選択パネルを開く（ボタンに割り当てて使う）
     public void Soubihyoujikousin(int index)
     {
-        charadata Sousachara = Playerkanricript.Sousacharakoushin();
-        SetSoubitype(Sousachara, index);
-        soubidankai = index;
+        if (playerScript == null)
+        {
+            if (playerManagerObject != null) playerScript = playerManagerObject.GetComponent<Playeriti>();
+            if (playerScript == null) return;
+        }
+
+        CharaEquipment equip = playerScript.GetEquipment();
+        if (equip == null) return;
+
+        // 選択中のスロットインデックスを保持
+        currentSlotIndex = Mathf.Clamp(index, 0, slotCount - 1);
+
+        // 対応する装備タイプを UI 表示用プロパティに反映
+        SetSoubitypeFromEquipment(equip, currentSlotIndex);
+
+        // 装備選択リストを作って表示
         Soubiransentakukoushin();
-        soubitypehyouzi.text = Soubitype.ToString();
-        soubisetumei.text = "";
-        Scroll.SetActive(true);
-        menukakushi.SetActive(true);
-        soubirankakushi.SetActive(true);
+
+        // UI 表示切替
+        //（制作上不要）if (soubitypeText != null) soubitypeText.text = Soubitype.ToString();
+        if (soubiSetumeiText != null) soubiSetumeiText.text = "";
+        if (scrollPanel != null) scrollPanel.SetActive(true);
+        if (menuMask != null) menuMask.SetActive(true);
+        //（制作上不要）if (soubiRanMask != null) soubiRanMask.SetActive(true);
     }
 
+    // 装備説明表示（プレハブから呼ばれる想定）
     public void Soubisetumeihyouji(string setumei)
     {
-        soubisetumei.text = setumei;
+        if (soubiSetumeiText != null) soubiSetumeiText.text = setumei;
     }
 
+    // スクロールパネルを閉じる
     public void ScrollClose()
     {
-        Scroll.SetActive(false);
-        menukakushi.SetActive(false);
-        soubirankakushi.SetActive(false);
+        CloseScrollPanels();
     }
+
+    // ------------------------
+    // ユーティリティ
+    // ------------------------
+    private void ClearContentChildren(GameObject parent)
+    {
+        for (int i = parent.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(parent.transform.GetChild(i).gameObject);
+        }
+    }
+
+    private void CloseScrollPanels()
+    {
+        if (scrollPanel != null) scrollPanel.SetActive(false);
+        if (menuMask != null) menuMask.SetActive(false);
+        //（制作上不要）if (soubiRanMask != null) soubiRanMask.SetActive(false);
+    }
+
+    // --- 元コードの Soubitype フィールド（そのまま維持） ---
+    [SerializeField] private Itemdata1.itemtype Soubitype;
 }
-*/

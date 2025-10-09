@@ -9,7 +9,7 @@ public class Titlemanager : MonoBehaviour
 {
     public void OnClickStartButton()
     {
-        SceneManager.LoadScene("Test");
+        SceneManager.LoadScene("Test2");
     }
     public void OnClickHowButton() 
     {

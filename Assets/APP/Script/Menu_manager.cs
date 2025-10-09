@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+//==================================
+//要らないスクリプト
+//==================================
 public class Menu_manager: MonoBehaviour
 {
     //メニューオブジェクトをシリアル化
@@ -10,7 +15,7 @@ public class Menu_manager: MonoBehaviour
 
     void Update()
     {
-
+        //ESCでのメニュー開閉
         if (menuzyoutai == false)
         {
             if (Input.GetButtonDown("Cancel"))
@@ -23,7 +28,6 @@ public class Menu_manager: MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
             }
         }
-
         else
         {
             if (Input.GetButtonDown("Cancel"))

@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class soubiyouso : MonoBehaviour
+public class Soubiyouso : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI Soubiitemname;
     [SerializeField] GameObject SoubiIcon;
