@@ -5,68 +5,88 @@ using TMPro;
 using UnityEngine;
 using static UnityEditor.Progress;
 
+
 public class Treasurebox : MonoBehaviour
 {
 
-    //player‚ÌˆÊ’uî•ñ‚ğScriptableObject‚É‚æ‚èassetfile‚É“ü‚ê‚½‚à‚Ì‚ğw’èB
-    //player‚ÌˆÊ’u‚ª‚í‚©‚é‚È‚ç‚±‚Ì•û–@ˆÈŠO‚Å‚àOKB
-    [SerializeField] PlayerData playerdata;
-
-    //’²‚×‚éƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç•ó” ‚ªŠJ‚­‹——£‚ğw’èB
+    //playerã®ä½ç½®æƒ…å ±ã‚’ScriptableObjectã«ã‚ˆã‚Šassetfileã«å…¥ã‚ŒãŸã‚‚ã®ã‚’æŒ‡å®šã€‚
+    //playerã®ä½ç½®ãŒã‚ã‹ã‚‹ãªã‚‰ã“ã®æ–¹æ³•ä»¥å¤–ã§ã‚‚OKã€‚
+    [SerializeField] Transform player;
+    //èª¿ã¹ã‚‹ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã‚‰å®ç®±ãŒé–‹ãè·é›¢ã‚’æŒ‡å®šã€‚
     [SerializeField] float kidoukyori;
+    //å®ç®±ã«å…¥ã‚Œã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã‚’itemdataã§æŒ‡å®šã€‚
+    //[SerializeField] Itemdata1 ireruitem;
 
-    //•ó” ‚É“ü‚ê‚éƒAƒCƒeƒ€‚ğitemdata‚Åw’èB
-    [SerializeField] Itemdata1 ireruitem;
-
-    //•ó” “ü‚ê‚éƒAƒCƒeƒ€‚Ì”‚ğw’èB
+    //å®ç®±å…¥ã‚Œã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã®æ•°ã‚’æŒ‡å®šã€‚
     [SerializeField] int itemkazu;
-
-    //•ó” ŠJ‚¢‚½‚ÌƒƒbƒZ[ƒW‚ğ•\¦‚·‚étext(itemnyusyu)‚ğw’è
-    [SerializeField] TextMeshProUGUI itemnyusyubunnsyou;
-
-    //•ó” ‚ÌŠJ‚¢‚½‚Ìitemnyusyu‚âimage‚ğ‚Ü‚Æ‚ß‚½canvas‚ğw’èB
+    [Header("UIé–¢é€£(ãƒ†ã‚­ã‚¹ãƒˆã€ã‚¢ã‚¤ã‚³ãƒ³ã€canvas)")]
+    //å®ç®±é–‹ã„ãŸæ™‚ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹text(itemnyusyu)ã‚’æŒ‡å®š
+    [SerializeField] TextMeshProUGUI[] getItemNames = new TextMeshProUGUI[3];
+    //[SerializeField] Sprite itemnyusyuicon;
+    [SerializeField] UnityEngine.UI.Image[] getItemImages = new UnityEngine.UI.Image[3];
+    //å®ç®±ã®é–‹ã„ãŸæ™‚ã®itemnyusyuã‚„imageã‚’ã¾ã¨ã‚ãŸcanvasã‚’æŒ‡å®šã€‚
     [SerializeField] GameObject canvas;
 
-
+    [Header("ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹å‚ç…§")]
     [SerializeField] private Itemdatabase itemDataBase;
+    [SerializeField] private EquipmentDatabase equipmentDataBase;
 
-    //itemkanriƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ğw’èB
+    //itemkanriã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æŒ‡å®šã€‚
     [SerializeField] GameObject itemObject;
-    Itemkanri itemscript;
-
-    //ƒƒjƒ…[ŠÇ—ƒIƒuƒWƒFƒNƒg‚ğw’èBƒƒjƒ…[‚ğŠJ‚¢‚Ä‚¢‚é‚É‚Í•ó” ‚ğŠJ‚¯‚È‚­‚µ‚½‚¢‚Ì‚Åw’è
+    [SerializeField] GameObject equipmentObject;
     [SerializeField] GameObject menuObject;
-    Menutyousei Menuscript;
-
-    //•ó” ‚ğŠJ‚¢‚½‚ÌƒƒbƒZ[ƒW‚ğ•\¦‚·‚éŠÔ‚ğw’è
-    [SerializeField] float moziteruzikan;
-
-    //ƒoƒbƒN‚ª‚¢‚Á‚Ï‚¢‚¾‚Á‚½‚ÌƒƒbƒZ[ƒW‚ğ•\¦‚·‚éŠÔ‚ğw’è
-    [SerializeField] float moziteruzikan2;
+    private ItemManager itemManager;
+    private Soubikanri equipmentManager;
+    private Menutyousei menuScript;
+    //ãƒ¡ãƒ‹ãƒ¥ãƒ¼ç®¡ç†ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æŒ‡å®šã€‚ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’é–‹ã„ã¦ã„ã‚‹æ™‚ã«ã¯å®ç®±ã‚’é–‹ã‘ãªãã—ãŸã„ã®ã§æŒ‡å®š
 
 
-    Animator anim;
 
-    //“n‚·’lŠi”[—p‚Ì”z—ñB 2‚Â‚Ì•Ï”‚ğ’l‚Æ‚µ‚Ä“n‚µ‚½‚¢‚Ì‚Å”z—ñ‚ğg—pB
-    int[] itemnumberkazu = new int[2];
+    [Header("æ™‚é–“é–¢é€£")]
+    //å®ç®±ã‚’é–‹ã„ãŸæ™‚ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹æ™‚é–“ã‚’æŒ‡å®š
+    [SerializeField] float messagetime;
+
+    //ãƒãƒƒã‚¯ãŒã„ã£ã±ã„ã ã£ãŸæ™‚ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹æ™‚é–“ã‚’æŒ‡å®š
+    [SerializeField] float errorMessagetime;
+
+
+    private Animator anim;
+
+    //æ¸¡ã™å€¤æ ¼ç´ç”¨ã®é…åˆ—ã€‚ 2ã¤ã®å¤‰æ•°ã‚’å€¤ã¨ã—ã¦æ¸¡ã—ãŸã„ã®ã§é…åˆ—ã‚’ä½¿ç”¨ã€‚
+    //int[] itemnumberkazu = new int[2];
 
     int open;
 
     bool tuikakanou;
     bool menuhirakikaeshi;
 
-
-    void Start()
+    void Awake()
     {
-        anim = GetComponent<Animator>(); //animator‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ğæ“¾
-        
+
+        //prefabå¤–ã®ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã‚¹ã‚¯ãƒªãƒ—ãƒˆã®å–å¾—
+        if (itemObject == null)
+        {
+            itemObject = GameObject.Find("ItemManagement");
+        }
+        if (equipmentObject == null)
+        {
+            equipmentObject = GameObject.Find("SoubiManagement");
+        }
+        if (menuObject == null)
+        {
+            menuObject = GameObject.Find("Menutyousei");
+        }
+
+        // ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå–å¾—
+        anim = GetComponent<Animator>(); //animatorã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å–å¾—
+        itemManager = itemObject?.GetComponent<ItemManager>();
+        equipmentManager = equipmentObject?.GetComponent<Soubikanri>();
+        menuScript = menuObject?.GetComponent<Menutyousei>();
     }
 
-
-    // Update is called once per frame
     void Update()
     {
-        //•ó” ‚ğŠJ‚«’†AŠJ‚¢‚½Œã‚ÍƒŠƒ^[ƒ“‚µ‚Äˆ—‚µ‚È‚¢B
+        //å®ç®±ã‚’é–‹ãä¸­ã€é–‹ã„ãŸå¾Œã¯ãƒªã‚¿ãƒ¼ãƒ³ã—ã¦å‡¦ç†ã—ãªã„ã€‚
         open = anim.GetInteger("open");
 
         if (open != 0)
@@ -74,102 +94,89 @@ public class Treasurebox : MonoBehaviour
             return;
         }
 
-        //ƒƒjƒ…[‚ğŠJ‚¢‚Ä‚¢‚é‚È‚çƒŠƒ^[ƒ“‚µ‚Äˆ—‚µ‚È‚¢B
-        Menuscript = menuObject.GetComponent<Menutyousei>();
-        menuhirakikaeshi = Menuscript.menuhiraki();
+        //ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’é–‹ã„ã¦ã„ã‚‹ãªã‚‰ãƒªã‚¿ãƒ¼ãƒ³ã—ã¦å‡¦ç†ã—ãªã„ã€‚
+        //Menuscript = menuObject.GetComponent<Menutyousei>();
+        menuhirakikaeshi = menuScript.menuhiraki();
         if (menuhirakikaeshi)
         {
             return;
 
         }
 
-
-        //ƒvƒŒƒCƒ„[‚Æ•ó” ‚Æ‚Ì‹——£‚ğ‹‚ß‚éB
-        Vector3 takarabakoposition = this.transform.position;
-        Vector3 playerposition = playerdata.player.position;
-        Vector3 kyori = playerposition - takarabakoposition;
-
-
-        //•ó” ‚ÆƒvƒŒƒCƒ„[ŠÔ‚Ì‹——£ƒxƒNƒgƒ‹‚ªw’è‚µ‚½‹N“®‹——£ˆÈ‰º‚©‚Ç‚¤‚©
-        if (kidoukyori > kyori.magnitude)
+        /*
+        //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨å®ç®±ã¨ã®è·é›¢ã‚’æ±‚ã‚ã‚‹ã€‚
+        Vector3 takarabakoposition = this.transform.position;//å®ç®±ã®ä½ç½®
+        //Vector3 playerposition = playerdata.player.position;  
+        Vector3 playerposition = player.position;//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+        float kidoukyori = 3f; //= playerposition - takarabakoposition;
+        float distance = Vector3.Distance(playerposition, takarabakoposition); //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨å®ç®±ã®è·é›¢
+        */
+        
+        if (Input.GetButtonDown("shiraberu"))
         {
-            //‚±‚Ìó‘Ô‚Å’²‚×‚éƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½ê‡‚É•ó” ‚ğŠJ‚¯‚éˆ—‚ğs‚¤B
-            if (Input.GetButtonDown("shiraberu"))
-            {
-                //openƒpƒ‰ƒ[ƒ^‚ğ1‚É‚·‚é‚±‚Æ‚Å‘JˆÚ‚ªs‚í‚êopem‚Ìanimationclip‚ªÄ¶
-                anim.SetInteger("open", 1);
+            StartCoroutine(OpenTreasureBox());
+            Debug.Log("å®ç®±ã‚’é–‹ãã¾ã™");
+        }
+        else
+        {
+            Debug.Log("å®ç®±ã‚’é–‹ããƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã¦ã„ã¾ã›ã‚“");
+        }
+    }
 
-                //w’è‚µ‚½•ó” ‚ÌƒAƒCƒeƒ€‚Ì–¼‘O‚ğ‘ã“ü
-                string itemname = ireruitem.GetItemname();
-                canvas.SetActive(true);
+    private IEnumerator OpenTreasureBox()
+    {
+        anim.SetInteger("open", 1);
+        canvas.SetActive(true);
 
-                //ƒRƒ‹[ƒ`ƒ“‚Å‘Ò‹@ˆ—‚ğs‚¤B
-                StartCoroutine(mozideruzikan());
+        var randomItem = GetRandomItem();
+        var randomEquipment1 = GetRandomEquipment();
+        var randomEquipment2 = GetRandomEquipment();
 
-                //o‚·ƒƒbƒZ[ƒW
-                itemnyusyubunnsyou.text = ($"{itemname}‚ğ{itemkazu}‚Âè‚É“ü‚ê‚½B");
+        var obtainedList = new List<IGameItem> { randomItem, randomEquipment1, randomEquipment2 };
 
-                //•ó” ‚É‚¢‚ê‚½ƒAƒCƒeƒ€‚Ìitemdata‚ÌƒŠƒXƒg‚Ì—v‘f”Ô†‚ğ‹‚ß‚éB
-                var index = itemDataBase.GetItemLists().IndexOf(ireruitem);
-
-
-
-                //—v‘f”Ô†‚ğ”z—ñ‚Ì0”Ô‚É‘ã“üB
-                itemnumberkazu[0] = index;
-
-                //•ó” ‚ÌƒAƒCƒeƒ€‚Ì”‚ğ”z—ñ‚Ì1”Ô‚É‘ã“üB
-                itemnumberkazu[1] = itemkazu;
-
-
-                //itemkanri‚ÌƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ÌitemkanriƒXƒNƒŠƒvƒg‚ğæ“¾
-                itemscript = itemObject.GetComponent<Itemkanri>();
-                //itemkanriƒXƒNƒŠƒvƒg‚ÌƒAƒCƒeƒ€’Ç‰Áƒƒ\ƒbƒh‚ğŒÄ‚Ño‚µA•Ô‚è’l(bool)‚ğŠi”[B
-                tuikakanou = itemscript.itemtuika(itemnumberkazu);
-
-
-            }
-
-
+        //UIã«åæ˜ 
+        for (int i = 0; i < 3; i++)
+        {
+            getItemNames[i].text = obtainedList[i].GetItemname();
+            getItemImages[i].sprite = obtainedList[i].GetItemicon();
+            getItemImages[i].enabled = true;
         }
 
-        IEnumerator mozideruzikan()
+        bool addedItem = itemManager.AddItem(randomItem, 1);
+        bool addedEq1 = equipmentManager.AddItem(randomEquipment1, 1);       
+        bool addedEq2 = equipmentManager.AddItem(randomEquipment2, 1);
+
+        tuikakanou = addedItem&&addedEq1&& addedEq2;
+
+        // ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸æ™‚é–“å¾…æ©Ÿ
+        yield return new WaitForSeconds(messagetime);
+
+        if (tuikakanou)
         {
-            // •¶š‚ªo‚éŠÔ‚¾‚¯‘Ò‹@  
-            yield return new WaitForSeconds(moziteruzikan);
-
-            if (tuikakanou)
-            {
-                //’Ç‰Á‰Â”\‚¾‚Á‚½ê‡‚É‚ÍƒƒbƒZ[ƒW‚ğÁ‚·B
-                canvas.SetActive(false);
-                //•ó” ‚©‚çƒAƒCƒeƒ€‚ğæ‚Á‚½Ø‚Æ‚µ‚Äopenƒpƒ‰ƒ[ƒ^‚ğ2‚É‚·‚éB
-                anim.SetInteger("open", 2);
-
-            }
-            else
-            {
-                //ƒCƒ“ƒxƒ“ƒgƒŠ‚ÌƒAƒCƒeƒ€ƒXƒƒbƒg‚ª–„‚Ü‚é‚©ƒAƒCƒeƒ€1í‚Ì‚Ä‚é”‚ÌŒÀŠE‚ª’´‚¦‚½ê‡‚ÍˆÈ‰º‚ÌƒƒbƒZ[ƒW‚ğo‚·B
-                //ƒoƒbƒNƒXƒ‰ƒbƒVƒ…n‚Ì‘g‚İ‡‚í‚¹‚Å‰üs‰Â”\B‚½‚¾‚µA“ú–{Œêwindows‚¾‚ÆˆÈ‰º‚Ì‚æ‚¤‚É\ƒ}[ƒN‚É•\¦‚³‚ê‚éB
-                itemnyusyubunnsyou.text = ("ƒoƒbƒN‚ª‚¢‚Á‚Ï‚¢‚¾B\nƒAƒCƒeƒ€‚ğŒ³‚ÌêŠ‚É–ß‚µ‚½B");
-
-                //X‚ÉƒRƒ‹[ƒ`ƒ“‚Å‘Ò‹@ˆ—‚ğs‚¤B
-                StartCoroutine(mozideruzikan2());
-            }
-
-        }
-
-        IEnumerator mozideruzikan2()
-        {
-            // •¶š‚ªo‚éŠÔ‚¾‚¯‘Ò‹@  
-            yield return new WaitForSeconds(moziteruzikan2);
-
-            //ƒoƒbƒN‚ª‚¢‚Á‚Ï‚¢EE‚ÌƒƒbƒZ[ƒW‚ğÁ‚·B
             canvas.SetActive(false);
-            //openƒpƒ‰ƒ[ƒ^‚ğ0‚É‚·‚é‚±‚Æ‚Å•ó” ‚ª•Â‚¶‚éB
-            anim.SetInteger("open", 0);
-
-
+            anim.SetInteger("open", 2); // é–‹å°æ¸ˆã¿
+        }
+        else
+        {
+            foreach (var t in getItemNames) t.text = "ãƒãƒƒã‚¯ãŒã„ã£ã±ã„ã§ã™";
+            yield return new WaitForSeconds(errorMessagetime);
+            canvas.SetActive(false);
+            anim.SetInteger("open", 0); // é–‰ã˜ã‚‹
         }
 
+    }
+
+    private Itemdata1 GetRandomItem()
+    {
+        var items = itemDataBase.GetItemLists();
+        int index = UnityEngine.Random.Range(0, items.Count);
+        return items[index];
+    }
+    private EquipmentData1 GetRandomEquipment()
+    {
+        var equips = equipmentDataBase.GetItemLists();
+        int index = UnityEngine.Random.Range(0, equips.Count);
+        return equips[index];
     }
 
 }

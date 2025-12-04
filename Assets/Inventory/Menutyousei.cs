@@ -1,21 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 //====================================
-//Esc‚Å‚ÌMenu‚ÌŠJ•ÂAƒ}ƒEƒXƒJ[ƒ\ƒ‹•\¦
+//Escã§ã®Menuã®é–‹é–‰ã€ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«è¡¨ç¤º(æˆ¦é—˜ä¸­ç”¨)
 //====================================
 
 public class Menutyousei : MonoBehaviour
 {
     [SerializeField] GameObject MenuObject;
+    [Header("å„ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®toggle")]
+    [SerializeField] private Toggle charaToggle;
+    [SerializeField] private Toggle soubiToggle;
+    [SerializeField] private Toggle itemToggle;
 
+    [Header("å„ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ä¸­èº«")]
+    [SerializeField] private GameObject charaInside;
+    [SerializeField] private GameObject soubiInside;
+    [SerializeField] private GameObject itemInside;
     bool menuzyoutai;
 
     void Update()
     {
-        //ESC‚Å‚Ìƒƒjƒ…[‚ÌŠJ•Â
+        //ESCã§ã®ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®é–‹é–‰
         if (menuzyoutai == false)
         {
             if (Input.GetButtonDown("Cancel"))
@@ -23,7 +31,7 @@ public class Menutyousei : MonoBehaviour
                 MenuObject.gameObject.SetActive(true);
                 menuzyoutai = true;
 
-                // ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ğ•\¦‚É‚µAˆÊ’uŒÅ’è‰ğœ
+                // ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ã‚’è¡¨ç¤ºã«ã—ã€ä½ç½®å›ºå®šè§£é™¤
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
             }
@@ -35,19 +43,40 @@ public class Menutyousei : MonoBehaviour
                 MenuObject.gameObject.SetActive(false);
                 menuzyoutai = false;
 
-                // ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ğ”ñ•\¦‚É‚µAˆÊ’u‚ğŒÅ’è
+                // ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ã‚’éè¡¨ç¤ºã«ã—ã€ä½ç½®ã‚’å›ºå®š
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
     }
 
-    //ƒAƒCƒeƒ€E‘•”õEƒLƒƒƒ‰toggle‚Ìƒƒjƒ…[ŠJ•Â
+    //ã‚¢ã‚¤ãƒ†ãƒ ãƒ»è£…å‚™ãƒ»ã‚­ãƒ£ãƒ©toggleã®ãƒ¡ãƒ‹ãƒ¥ãƒ¼é–‹é–‰
     public void toggle_menu()
     {
 
+        // ã‚­ãƒ£ãƒ©ãƒ¡ãƒ‹ãƒ¥ãƒ¼ONæ™‚
+        if (charaToggle.isOn)
+        {
+            charaInside.SetActive(true);
+            soubiInside.SetActive(false);
+            itemInside.SetActive(false);
+        }
+        // è£…å‚™ãƒ¡ãƒ‹ãƒ¥ãƒ¼ONæ™‚
+        else if (soubiToggle.isOn)
+        {
+            charaInside.SetActive(false);
+            soubiInside.SetActive(true);
+            itemInside.SetActive(false);
+        }
+        // ã‚¢ã‚¤ãƒ†ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼ONæ™‚
+        else if (itemToggle.isOn)
+        {
+            charaInside.SetActive(false);
+            soubiInside.SetActive(false);
+            itemInside.SetActive(true);
+        }
     }
-    //ƒƒjƒ…[ó‘Ô‚ğ•Ô‚·
+    //ãƒ¡ãƒ‹ãƒ¥ãƒ¼çŠ¶æ…‹ã‚’è¿”ã™
     public bool menuhiraki()
     {
         return menuzyoutai;
