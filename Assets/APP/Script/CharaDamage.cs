@@ -13,7 +13,8 @@ public class CharaDamage : MonoBehaviour, IDamageable
 {
     [Header("キャラクターデータ")]
     [SerializeField] protected Charadata charadata;  
-    [SerializeField] protected Slider Slider;        
+    [SerializeField] protected Slider Slider;    
+       
 
     [Header("ダメージUI")]
     [SerializeField] protected DamageTextManager damageTextManager; 
@@ -141,13 +142,16 @@ public class CharaDamage : MonoBehaviour, IDamageable
         invincibleTime = Time.frameCount + (int)time;
         Debug.Log($"[CharaDamage] 無敵開始: {(int)time}フレーム (現在: {Time.frameCount}, 終了: {invincibleTime})");
     }
-    /// <summary>
-    /// 死亡処理
-    /// </summary>
-    protected virtual void Death()
+
+    public virtual void Death()
     {
-        Destroy(gameObject);
+         
     }
+    public virtual void DeathEnd()
+    {
+        this.gameObject.SetActive(false);
+    }
+
 
 
     

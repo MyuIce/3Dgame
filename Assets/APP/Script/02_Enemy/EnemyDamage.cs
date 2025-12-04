@@ -15,11 +15,32 @@ public class EnemyDamage : CharaDamage
     /// <summary>
     /// 死亡処理
     /// </summary>
-    protected override void Death()
+    private Animator anim;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        anim = GetComponent<Animator>();
+    }
+
+    /// <summary>
+    /// 死亡処理
+    /// </summary>
+    public override void Death()
     {
         Debug.Log("敵死亡");
         SpawnTreasure();
-        base.Death();
+        
+        // アニメーション再生
+        if (anim != null)
+        {
+            anim.SetInteger("Death", 1);
+        }
+        else
+        {
+            Debug.Log("アニメーション再生失敗");
+        }
+        
     }
 
     /// <summary>
@@ -31,4 +52,6 @@ public class EnemyDamage : CharaDamage
         Instantiate(treasureBoxPrefab, spawnPos, Quaternion.identity);
         Debug.Log("宝箱生成");
     }
+
+    
 }

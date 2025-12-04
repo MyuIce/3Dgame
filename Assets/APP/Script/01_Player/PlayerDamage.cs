@@ -9,8 +9,10 @@ using UnityEngine;
 /// </summary>
 public class PlayerDamage : CharaDamage,IDamageable
 {
+    private Animator anim;
     protected override void Awake()
     {
+        anim = GetComponent<Animator>();
         base.Awake();  // 基底クラスの初期化を呼び出す
         
     }
@@ -59,9 +61,22 @@ public class PlayerDamage : CharaDamage,IDamageable
     }
     */
 
-    protected override void Death()
+    public override void Death()
     {
         Debug.Log("プレイヤー死亡");
-        base.Death();
+        if (anim != null)
+        {
+            anim.SetInteger("Death", 1);
+        }
+        else
+        {
+            Debug.Log("アニメーション再生失敗");
+        }
     }
+    public override void DeathEnd()
+    {
+        this.gameObject.SetActive(false);
+        Debug.Log("プレイヤー死亡終了");
+    }
+    
 }
