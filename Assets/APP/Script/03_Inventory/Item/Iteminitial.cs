@@ -1,12 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using static Itemdata1;
-using static UnityEditor.Progress;
 
 //====================================================
-//ƒAƒCƒeƒ€‚Ì‰Šú‚¿•¨İ’èƒXƒNƒŠƒvƒg
+//ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ’ï¿½Xï¿½Nï¿½ï¿½ï¿½vï¿½g
 //====================================================
 
 
@@ -14,7 +12,7 @@ using static UnityEditor.Progress;
 public class Iteminitial : MonoBehaviour
 {
     [SerializeField] private Itemdatabase itemDataBase;
-    //@ƒAƒCƒeƒ€”ŠÇ—
+    //ï¿½@ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½Ç—ï¿½
     private Dictionary<Itemdata1, int> itemkazu = new Dictionary<Itemdata1, int>();
 
 
@@ -23,11 +21,11 @@ public class Iteminitial : MonoBehaviour
     {
         for (int i = 0; i < itemDataBase.GetItemLists().Count; i++)
         {
-            //@ƒAƒCƒeƒ€”‚ğ‘S‚Ä0‚É
+            //ï¿½@ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Sï¿½ï¿½0ï¿½ï¿½
             itemkazu.Add(itemDataBase.GetItemLists()[i], 0);
         }
 
-        //ƒ|[ƒVƒ‡ƒ“‚Ì‚İ”‚ğ2‚É‚·‚éB
+        //ï¿½|ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Ì‚İï¿½ï¿½ï¿½2ï¿½É‚ï¿½ï¿½ï¿½B
         //itemkazu[itemDataBase.GetItemLists()[1]] = 2;
 
         var a = itemkazu[itemDataBase.GetItemLists()[0]];

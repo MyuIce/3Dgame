@@ -10,6 +10,8 @@ using UnityEngine;
 public class PlayerDamage : CharaDamage,IDamageable
 {
     private Animator anim;
+    [SerializeField]GameObject DeathCanvas;
+    [SerializeField]Camera DeathCamera;
     protected override void Awake()
     {
         anim = GetComponent<Animator>();
@@ -17,49 +19,7 @@ public class PlayerDamage : CharaDamage,IDamageable
         
     }
 
-    /*
-    public override void Damage(int value)
-    {
-        // 無敵状態チェック（基底クラスと同じ）
-        if (invincible && Time.frameCount < invincibleTime)
-        {
-            int remainingFrames = invincibleTime - Time.frameCount;
-            Debug.Log($"[PlayerDamage] 無敵中！ダメージ無効 (残り{remainingFrames}フレーム)");
-            return;
-        }
-        if (Time.frameCount >= invincibleTime)
-        {
-            invincible = false;
-        }
-
-        var Raw = charadata.GetRawStatus();
-        
-        // 装備込みの最終ステータスを取得
-        var totalStatus = runtimeStatus.GetTotalStatus();
-        
-        // ダメージ計算: 敵の攻撃力 - プレイヤーの装備込み防御力
-        int actualDamage = value - totalStatus.DEF;
-        
-        Debug.Log($"[PlayerDamage] ダメージ計算: 敵ATK={value}, プレイヤーDEF={totalStatus.DEF}, 計算結果={actualDamage}");
-        
-        // 最低1ダメージは受ける（オプション）
-        if (actualDamage < 1) actualDamage = 1;
-        
-        HP -= actualDamage;
-        
-        // ダメージテキストを表示
-        OnDamageReceived(actualDamage);
-        
-        // HPゲージのスライダーを更新
-        Slider.value = (float)HP / (float)Raw.MAXHP;
-        
-        // HPが0以下になったら死亡処理を実行
-        if (HP <= 0)
-        {
-            Death();
-        }
-    }
-    */
+    
 
     public override void Death()
     {
@@ -72,11 +32,18 @@ public class PlayerDamage : CharaDamage,IDamageable
         {
             Debug.Log("アニメーション再生失敗");
         }
+        DeathCanvas.SetActive(true);
+
     }
     public override void DeathEnd()
     {
+        DeathCamera.enabled = true;
         this.gameObject.SetActive(false);
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         Debug.Log("プレイヤー死亡終了");
+        
+        
     }
     
 }

@@ -31,5 +31,10 @@ public class SceneSwitch : MonoBehaviour
     {
         SceneManager.LoadScene("Title");
     }
+    public void OnClickRetryStage1Button()
+    {
+        SceneManager.LoadScene("Test2");
+        
+    }
 
 }

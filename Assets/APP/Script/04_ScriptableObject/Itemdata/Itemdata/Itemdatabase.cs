@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 [CreateAssetMenu(menuName = "Data/Create ItemDataBase")]
 public class Itemdatabase : ScriptableObject
@@ -10,7 +9,7 @@ public class Itemdatabase : ScriptableObject
     [SerializeField]
     private List<Itemdata1> itemLists = new List<Itemdata1>();
 
-    //@ƒAƒCƒeƒ€ƒŠƒXƒg‚ğ•Ô‚·
+    //ï¿½@ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½Ô‚ï¿½
     public List<Itemdata1> GetItemLists()
     {
         return itemLists;

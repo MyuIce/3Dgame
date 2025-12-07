@@ -76,7 +76,18 @@ public class Enemystate1 : MonoBehaviour, IEnemy
     /// </summary>
     public int EnemyAIaction()
     {
-        if (player == null) return (int)currentState;
+        // プレイヤーが死亡した時に敵を待機状態にする
+        if (player == null || !player.activeInHierarchy)
+        {
+            currentState = EnemyState.Idle;
+            if (animator != null)
+            {
+                animator.SetFloat("Attack", 0f);
+                animator.SetFloat("MoveX", 0f);
+                animator.SetFloat("MoveZ", 0f);
+            }
+            return (int)currentState;
+        }
 
         float distance = Vector3.Distance(transform.position, player.transform.position);
 
@@ -221,6 +232,8 @@ public class Enemystate1 : MonoBehaviour, IEnemy
     /// </summary>
     void ChasePlayer()
     {
+        if (player == null || !player.activeInHierarchy) return;
+        
         Vector3 direction = (player.transform.position - transform.position).normalized;
         direction.y = 0; // Y軸方向の移動を無効化(水平移動のみ)
 
@@ -245,6 +258,8 @@ public class Enemystate1 : MonoBehaviour, IEnemy
     /// </summary>
     void FacePlayer()
     {
+        if (player == null || !player.activeInHierarchy) return;
+        
         Vector3 direction = (player.transform.position - transform.position).normalized;
         direction.y = 0; // Y軸は固定(水平回転のみ)
 
@@ -262,6 +277,8 @@ public class Enemystate1 : MonoBehaviour, IEnemy
     /// <returns>前方にいればtrue</returns>
     bool IsPlayerInFront(float angleThreshold)
     {
+        if (player == null || !player.activeInHierarchy) return false;
+        
         Vector3 directionToPlayer = player.transform.position - transform.position;
         directionToPlayer.y = 0; // 高さの違いを無視（水平方向のみで判定）
         
@@ -283,15 +300,12 @@ public class Enemystate1 : MonoBehaviour, IEnemy
         // ワールド座標の移動方向をローカル座標系に変換
         Vector3 localDirection = transform.InverseTransformDirection(worldDirection);
 
-        // Blend Treeのパラメータを更新
-        // MoveX: 左右の移動 (-1: 左, 0: なし, 1: 右)
-        // MoveZ: 前後の移動 (-1: 後ろ, 0: なし, 1: 前)
         animator.SetFloat("MoveX", localDirection.x);
         animator.SetFloat("MoveZ", localDirection.z);
     }
 
     /// <summary>
-    /// デバッグ用Gizmosの描画
+    /// Gizmosの描画
     /// </summary>
     void OnDrawGizmosSelected()
     {

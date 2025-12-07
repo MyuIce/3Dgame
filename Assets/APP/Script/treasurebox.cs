@@ -3,28 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 
 public class Treasurebox : MonoBehaviour
 {
 
-    //playerの位置情報をScriptableObjectによりassetfileに入れたものを指定。
-    //playerの位置がわかるならこの方法以外でもOK。
+    
     [SerializeField] Transform player;
-    //調べるボタンを押したら宝箱が開く距離を指定。
+    
     [SerializeField] float kidoukyori;
-    //宝箱に入れるアイテムをitemdataで指定。
-    //[SerializeField] Itemdata1 ireruitem;
+    
 
-    //宝箱入れるアイテムの数を指定。
     [SerializeField] int itemkazu;
     [Header("UI関連(テキスト、アイコン、canvas)")]
-    //宝箱開いた時のメッセージを表示するtext(itemnyusyu)を指定
+    
     [SerializeField] TextMeshProUGUI[] getItemNames = new TextMeshProUGUI[3];
-    //[SerializeField] Sprite itemnyusyuicon;
+    
     [SerializeField] UnityEngine.UI.Image[] getItemImages = new UnityEngine.UI.Image[3];
-    //宝箱の開いた時のitemnyusyuやimageをまとめたcanvasを指定。
+    
+    //アイテム取得時のcanvasを指定
     [SerializeField] GameObject canvas;
 
     [Header("データベース参照")]
@@ -102,15 +99,6 @@ public class Treasurebox : MonoBehaviour
             return;
 
         }
-
-        /*
-        //プレイヤーと宝箱との距離を求める。
-        Vector3 takarabakoposition = this.transform.position;//宝箱の位置
-        //Vector3 playerposition = playerdata.player.position;  
-        Vector3 playerposition = player.position;//プレイヤーの位置
-        float kidoukyori = 3f; //= playerposition - takarabakoposition;
-        float distance = Vector3.Distance(playerposition, takarabakoposition); //プレイヤーと宝箱の距離
-        */
         
         if (Input.GetButtonDown("shiraberu"))
         {
@@ -128,11 +116,11 @@ public class Treasurebox : MonoBehaviour
         anim.SetInteger("open", 1);
         canvas.SetActive(true);
 
-        var randomItem = GetRandomItem();
         var randomEquipment1 = GetRandomEquipment();
         var randomEquipment2 = GetRandomEquipment();
+        var randomEquipment3 = GetRandomEquipment();
 
-        var obtainedList = new List<IGameItem> { randomItem, randomEquipment1, randomEquipment2 };
+        var obtainedList = new List<IGameItem> { randomEquipment1, randomEquipment2, randomEquipment3 };
 
         //UIに反映
         for (int i = 0; i < 3; i++)
@@ -142,11 +130,12 @@ public class Treasurebox : MonoBehaviour
             getItemImages[i].enabled = true;
         }
 
-        bool addedItem = itemManager.AddItem(randomItem, 1);
+        
         bool addedEq1 = equipmentManager.AddItem(randomEquipment1, 1);       
         bool addedEq2 = equipmentManager.AddItem(randomEquipment2, 1);
-
-        tuikakanou = addedItem&&addedEq1&& addedEq2;
+        bool addedEq3 = equipmentManager.AddItem(randomEquipment3, 1);
+        
+        tuikakanou = addedEq1&&addedEq2&& addedEq3;
 
         // メッセージ時間待機
         yield return new WaitForSeconds(messagetime);
@@ -166,7 +155,7 @@ public class Treasurebox : MonoBehaviour
 
     }
 
-    private Itemdata1 GetRandomItem()
+    private Itemdata1 GetRandomItem()//今後追加予定
     {
         var items = itemDataBase.GetItemLists();
         int index = UnityEngine.Random.Range(0, items.Count);

@@ -4,7 +4,6 @@ using System.Threading;//スレッド処理を使えるようになるがCorouti
 using UnityEngine;//MonoBehaviour,GameObject,Transform,Vector3,Timeなど
 using UnityEngine.EventSystems;//EventSystemなど
 
-using static UnityEditor.PlayerSettings;
 
 //==================================================================
 //キャラクターの移動、アニメーション（移動、攻撃モーション）
@@ -21,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator; // Animatorのコンポーネント
     private Rigidbody rb;
     private Transform cam;//カメラの位置
-    private RaycastHit ground;
+    public Canvas DeathCanvas;
 
     
     //=====移動関連=====
@@ -41,20 +40,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 currentRotation;   // 現在の回転
     Vector3 originalRotation; // 回転記憶
     Vector3 raycalc; //光計算
-
-    //=====ジャンプ関連=====
-    [Header("ジャンプ関連")]
-    public float jumpSpeed = 250f; // ジャンプ速度
     
-
-    //=====ダッシュ関連=====(使用しない予定)
-    [Header("ダッシュ関連")]
-    public float dashSpeed = 1500f;//ダッシュ速度
-    float dashtime = 0.3f;//ダッシュ時間
-    float dashCool = 1.5f;//ダッシュクールタイム
-    bool dashPermission = true;//ダッシュ許可
-    Vector3 dashDirection = Vector3.zero;//ダッシュ移動方向
-
     //=====攻撃関連=====
     [Header("攻撃関連")]
     private const int MAX_COMBO_COUNT = 4; //最大コンボ段数
@@ -91,6 +77,12 @@ public class PlayerMovement : MonoBehaviour
 
         // 開始位置を記録
         startPosition = transform.position;
+        
+        // DeathCanvasが割り当てられている場合のみ無効化
+        if (DeathCanvas != null)
+        {
+            DeathCanvas.enabled = false;
+        }
     }
 
     void Update()
@@ -99,8 +91,6 @@ public class PlayerMovement : MonoBehaviour
         HandleInput();
         //カメラ処理
         HandleCamera();
-        //ダッシュ処理(後にガード)
-        HandleDash();
         //攻撃処理
         HandleAttack();
         //ガード処理
@@ -212,20 +202,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-    
 
-    void HandleDash()
-    {
-        //ダッシュの処理
-        if (Input.GetButtonDown("Fire3") && dashPermission == true)
-        {
-            dashDirection = new Vector3(moveX, 0, moveZ).normalized;
-            rb.AddForce(transform.TransformDirection(dashDirection) * dashSpeed, ForceMode.Impulse);
-            dashPermission = false;
-
-            StartCoroutine(Dashwari());
-        }
-    }
 
     void HandleAudio()
     {
@@ -233,17 +210,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    //ダッシュ関数
-    IEnumerator Dashwari()
-    {
-        //ダッシュを終わらせる
-        yield return new WaitForSeconds(dashtime);
-        rb.velocity = Vector3.zero;
-
-        //ダッシュクールタイムだけ待機
-        yield return new WaitForSeconds(dashCool);
-        dashPermission = true;
-    }
+    
     void FootR()
     {
         //本当はここに足音入れる

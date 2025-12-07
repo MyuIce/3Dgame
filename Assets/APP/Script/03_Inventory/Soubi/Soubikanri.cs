@@ -73,11 +73,12 @@ public class Soubikanri : MonoBehaviour, IInventoryManager<EquipmentData1>
 
     public void Start()//現在はテスト関数を実行しているのみ。のちに削除
     {
-        Test_AddDummyEquipments();
+        //Test_AddDummyEquipments();
         RestoreEquippedUI();
     }
 
     //テスト用関数。のちに削除
+    /*
     private void Test_AddDummyEquipments()
     {
         //データベース内の全装備を取得
@@ -103,6 +104,7 @@ public class Soubikanri : MonoBehaviour, IInventoryManager<EquipmentData1>
             Debug.LogWarning("装備データが不足しています（3つ以上必要）。");
         }
     }
+    */
     //==============================================================
 
     /// <summary>

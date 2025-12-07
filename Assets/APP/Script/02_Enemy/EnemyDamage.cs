@@ -49,7 +49,9 @@ public class EnemyDamage : CharaDamage
     private void SpawnTreasure()
     {
         Vector3 spawnPos = dropPoint != null ? dropPoint.position : transform.position;
-        Instantiate(treasureBoxPrefab, spawnPos, Quaternion.identity);
+
+        Quaternion spawnRotation =  Quaternion.Euler(0, 180, 0);
+        Instantiate(treasureBoxPrefab, spawnPos, spawnRotation);
         Debug.Log("宝箱生成");
     }
 

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charaStatus:
     NAME: Player
-    MAXHP: 1000
+    MAXHP: 239
     ATK: 300
     DEF: 100
     INT: 100

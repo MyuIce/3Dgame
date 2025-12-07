@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 /// <summary>
-/// ItemInventory.cs‚ÆItemInventoryUI.cs‚Ìƒf[ƒ^‚ÆUI‚Ì•R‚Ã‚¯ŠÇ—
+/// ItemInventory.csï¿½ï¿½ItemInventoryUI.csï¿½Ìƒfï¿½[ï¿½^ï¿½ï¿½UIï¿½Ì•Rï¿½Ã‚ï¿½ï¿½Ç—ï¿½
 /// 
 /// Start()
 /// AddInitialItems()
@@ -14,7 +14,7 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    [Header("QÆİ’è")]
+    [Header("ï¿½Qï¿½Æİ’ï¿½")]
     [SerializeField] private Itemdatabase itemDatabase;
     [SerializeField] private ItemInventoryUI inventoryUI;
 
@@ -22,33 +22,33 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
-        // ƒf[ƒ^‘w¶¬
+        // ï¿½fï¿½[ï¿½^ï¿½wï¿½ï¿½ï¿½ï¿½
         inventory = new ItemInventory();
         inventory.Initialize(itemDatabase.GetItemLists());
         
 
 
-        // ‰ŠúƒAƒCƒeƒ€“o˜^i”CˆÓj
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½oï¿½^ï¿½iï¿½Cï¿½Ój
         if (itemDatabase.GetItemLists().Count >= 2)
         {
             inventory.AddItem(itemDatabase.GetItemLists()[0], 1);
-            inventory.AddItem(itemDatabase.GetItemLists()[1], 2);
+            inventory.AddItem(itemDatabase.GetItemLists()[2], 2);
             
-            inventory.AddItem(itemDatabase.GetItemLists()[3], 1);
+            inventory.AddItem(itemDatabase.GetItemLists()[4], 1);
         }
-        // UI‘w‰Šú‰»
+        // UIï¿½wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         inventoryUI.Initialize(inventory);
 
     }
 
     /// <summary>
-    /// ŠO•”‚©‚çŒÄ‚Ño‚¹‚éƒAƒCƒeƒ€’Ç‰ÁŠÖ”
+    /// ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚Ñoï¿½ï¿½ï¿½ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½Ç‰ï¿½ï¿½Öï¿½
     /// </summary>
     public bool AddItem(Itemdata1 item, int amount)
     {
         if (inventory.AddItem(item, amount))
             inventoryUI.UpdateUI();
-        Debug.Log("’Ç‰Á‚µ‚½‚æ");
+        Debug.Log("ï¿½Ç‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         return true;
 
     }

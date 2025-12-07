@@ -1,16 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 [CreateAssetMenu(menuName = "Data/Create EquipmentDataBase")]
 public class EquipmentDatabase : ScriptableObject
 {
-    //EquipmentData1‚Æ‚¢‚¤ƒf[ƒ^ƒx[ƒX‚ğì¬
+    //EquipmentData1ï¿½Æ‚ï¿½ï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½xï¿½[ï¿½Xï¿½ï¿½ï¿½ì¬
     [SerializeField]
     private List<EquipmentData1> itemLists = new List<EquipmentData1>();
 
-    //@ƒAƒCƒeƒ€ƒŠƒXƒg‚ğ•Ô‚·
+    //ï¿½@ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½Ô‚ï¿½
     public List<EquipmentData1> GetItemLists()
     {
         return itemLists;

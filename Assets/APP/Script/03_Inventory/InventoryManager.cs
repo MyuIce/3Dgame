@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// シーン間でインベントリデータを保持するマネージャー
-/// ビジネスロジックは各マネージャークラス（Soubikanri、ItemInventory(Itemのデータクラス)等）に委譲
+/// データロジックは各マネージャー（Soubikanri、ItemInventory(Itemのデータクラス)）に委譲
 /// </summary>
 public class InventoryManager : MonoBehaviour
 {
@@ -77,7 +77,7 @@ public class InventoryManager : MonoBehaviour
     // -------------------------------------------------------------------------
     
     /// <summary>
-    /// 全データをリセット（Newゲームなど用）
+    /// 全データをリセット（Newゲームなど用）（現在未使用）
     /// </summary>
     public void ResetAllData()
     {

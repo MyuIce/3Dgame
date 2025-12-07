@@ -6,11 +6,19 @@ using UnityEngine.UI;
 public class GaugeDirection : MonoBehaviour
 {
     [SerializeField] Canvas canvas;
-
-    // Update is called once per frame
-    void Update()
+    private Camera mainCamera;
+    
+    void Start()
     {
-        //EnemyGauge‚ğMainCamera‚ÖŒü‚©‚í‚¹‚é
-        canvas.transform.rotation = Camera.main.transform.rotation;
+        mainCamera = Camera.main;
+        canvas.transform.rotation = mainCamera.transform.rotation;   
+    }
+    void LateUpdate()
+    {
+        if (mainCamera != null && canvas != null)
+        {
+            // EnemyGaugeã‚’MainCameraã¸å‘ã‹ã‚ã›ã‚‹
+            canvas.transform.rotation = mainCamera.transform.rotation;
+        }
     }
 }

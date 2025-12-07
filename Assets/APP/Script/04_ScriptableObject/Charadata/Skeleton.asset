@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charaStatus:
     NAME: "\u30B9\u30B1\u30EB\u30C8\u30F3"
-    MAXHP: 100
+    MAXHP: 1
     ATK: 350
     DEF: 100
     INT: 50
